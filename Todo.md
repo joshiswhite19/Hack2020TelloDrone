@@ -11,13 +11,21 @@
 ## Key Components (in order of importance)
 
 - Designated area detection and control (opencv and flight controls)
+- - On start, scope out perimeter kinda like a 3d printer zeroing itself?
+- Standard patrol procedure (flight controls)
 - Household object identification (opencv)
-- Identified object record keeping and management
-- Appropriate action logic
+- - Maybe use object mats?
+- Identified object record keeping and management (mainly record keeping)
+- - Make a dictionary of objects that stores timestamp and last known location
+- Appropriate action logic (flight controls mainly)
 
 ## Secondary Components
 
 - Drone status checking
+- - Make sure it's in good condition before taking off and whatnot
 - Aborts, safety
+- - Keep away from objects and land safely if in weird state
 - Simulation mode
+- - Set up to help debug logic and whatnot
 - Exception handling
+- - Kinda feeds into everything else
