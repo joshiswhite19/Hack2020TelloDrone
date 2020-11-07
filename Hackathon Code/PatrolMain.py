@@ -20,6 +20,12 @@ state = {
     'z': 0, # height in cm
     'theta': 0 # Direction in radians
 }
+# Personality states (what the drone should be doing):
+# 'STARTUP' - initial state of drone
+# 'PATROL' - default normal state, just traverse patrol zone and keep watch
+#            for any objects that will cause a personality change
+# 'FOLLOW' - follow an object tagged for following
+personality = 'STARTUP' 
 
 ####################### OPERATING MODES ##############################
  
@@ -103,7 +109,7 @@ def moveLeft(x):
     )
 
 # Wrapper for Tello.move_right function
-def moveLeft(x):
+def moveRight(x):
     if flight: drone.move_right(x)
     thet = state['theta'] - (np.pi/2)
     updateState(
@@ -132,21 +138,31 @@ def rotateCCW(x):
     if flight: drone.rotate_counter_clockwise(x)
     updateState(0, 0, 0, x * (np.pi/180))
 
-def checkBounds(state):
-    todo = 1
+
 
 # Set initial state to zero
 # Update whenever a move happens
 
 ### MAIN PATROL FUNCTIONALITY
 
-def checkBounds():
-    todo = 1
-
 # If moving out of bounds, correct position
+def checkBounds():
+    # Calculate difference between current state and bounds, store in variables
+    x_dif = X_BOUND - state['x'] # if negative, outside bounds
+    y_dif = Y_BOUND - state['y'] # if negative, outside bounds
+    # If difference is negative, move it back in bounds
+    if (x_dif < 0) or (y_dif < 0):
+        print('OUTSIDE BOUNDS! HALP!')
+
+
 # Define a basic patrol pattern
 def Patrol():
-    todo = 1
+    
+    while personality == 'PATROL':
+        todo = 1
+        # Move about pre-defined area
+        # Check that I am in bounds
+        # Keep an eye out for objects that will cause me to change personality
 
 
 ### IDENTIFY OBJECT FUNCTIONALITY
