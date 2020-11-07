@@ -23,11 +23,12 @@ state = {
 
 ######################################################################
  
-simulate = 1   #  0 FOR FLIGHT 1 FOR TESTING
+flight = 1     #  1 FOR FLIGHT 0 FOR NO FLIGHT TESTING
+vision = 1     #  1 FOR ACTIVE VISION TESTING
 verbose = 1    #  1 FOR ADDED LOGGING, 0 OTHERWISE
 
 ################## CONNECT TO TELLO & INIT ###########################
-if not simulate:
+if flight or vision:
     drone = Tello()
     drone.connect()
     drone.for_back_velocity = 0
@@ -72,7 +73,7 @@ def printState():
     
 # Wrapper for Tello.move_foward function
 def moveForward(x):
-    if not simulate: drone.move_forward(x)
+    if flight: drone.move_forward(x)
     updateState(
         x * math.cos(state['theta']),
         x * math.sin(state['theta']),
@@ -81,7 +82,7 @@ def moveForward(x):
 
 # Wrapper for Tello.move_back function
 def moveBack(x):
-    if not simulate: drone.move_back(x)
+    if flight: drone.move_back(x)
     updateState(
         -1 * x * math.cos(state['theta']),
         -1 * x * math.sin(state['theta']),
@@ -90,7 +91,7 @@ def moveBack(x):
 
 # Wrapper for Tello.move_left function
 def moveLeft(x):
-    if not simulate: drone.move_left(x)
+    if flight: drone.move_left(x)
     thet = state['theta'] + (np.pi/2)
     updateState(
         x*math.cos(thet),
@@ -100,7 +101,7 @@ def moveLeft(x):
 
 # Wrapper for Tello.move_right function
 def moveLeft(x):
-    if not simulate: drone.move_right(x)
+    if flight: drone.move_right(x)
     thet = state['theta'] - (np.pi/2)
     updateState(
         x*math.cos(thet),
@@ -110,26 +111,26 @@ def moveLeft(x):
 
 # Wrapper for Tello.move_up function
 def moveUp(x):
-    if not simulate: drone.move_up(x)
+    if flight: drone.move_up(x)
     updateState(0, 0, x, 0)
 
 # Wrapper for Tello.move_down function
 def moveDown(x):
-    if not simulate: drone.move_down(x)
+    if flight: drone.move_down(x)
     updateState(0, 0, -1 * x, 0)
 
 # Wrapper for Tello.rotate_clockwise function
 def rotateCW(x):
-    if not simulate: drone.rotate_clockwise(x)
+    if flight: drone.rotate_clockwise(x)
     updateState(0, 0, 0, -1 * x * (np.pi/180))
 
 # Wrapper for Tello.rotate_counter_clockwise function
 def rotateCCW(x):
-    if not simulate: drone.rotate_counter_clockwise(x)
+    if flight: drone.rotate_counter_clockwise(x)
     updateState(0, 0, 0, x * (np.pi/180))
 
 def checkBounds(state):
-    lala = 1
+    todo = 1
 
 # Set initial state to zero
 # Update whenever a move happens
@@ -144,12 +145,17 @@ def checkBounds(state):
 
 ### APPROPRIATE ACTION FUNCTIONALITY
 
+
+
+######################################################################
 #################### IMPLEMENT MAIN FUNCTION #########################
 def main():
     runtime = time.time()
+
     while True:
 
-        if verbose: print(f'Current runtime: {time.time() - runtime} seconds')
+        dt = time.time() - runtime
+        if verbose: print(f'Current runtime: {dt} seconds')
     # NEED TO REDO ALL OF THIS
         # GET THE IMAGE FROM TELLO
         #frame_read = drone.get_frame_read()
@@ -157,13 +163,13 @@ def main():
         #img = cv2.resize(myFrame, (img_width, img_height))
 
 
-        if not simulate: drone.takeoff()
+        if flight: drone.takeoff()
         time.sleep(2)
         rotateCW(90)
         time.sleep(2)
         moveLeft(35)
         time.sleep(2)
-        if not simulate: drone.land()
+        if flight: drone.land()
         startCounter = 1
     
         # # SEND VELOCITY VALUES TO TELLO
@@ -181,7 +187,7 @@ if __name__ == "__main__":
         main()
     except KeyboardInterrupt:
         print('\n KeyboardInterrupt recorded! Landing drone and quitting!')
-        if not simulate: drone.land()
+        if flight: drone.land()
 ######################################################################
 
 
