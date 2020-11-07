@@ -21,12 +21,13 @@ state = {
     'theta': 0 # Direction in radians
 }
 
-######################################################################
+####################### OPERATING MODES ##############################
  
 flight = 0     #  1 FOR FLIGHT 0 FOR NO FLIGHT TESTING
 vision = 1     #  1 FOR ACTIVE VISION TESTING
 verbose = 1    #  1 FOR ADDED LOGGING, 0 OTHERWISE
 
+######################################################################
 ################## CONNECT TO TELLO & INIT ###########################
 if flight or vision:
     drone = Tello()
@@ -45,7 +46,9 @@ if flight or vision:
     drone.streamoff()
     drone.streamon()
 
+######################################################################
 ####################### AUXILIARY FUNCTIONS ##########################
+######################################################################
 ### DETERMINE PATROL PERIMETER FUNCTIONALITY / MAIN MOVEMENT FUNCTION WRAPPERS
 
 # Straight set of the state dictionary
@@ -137,6 +140,13 @@ def checkBounds(state):
 
 ### MAIN PATROL FUNCTIONALITY
 
+def checkBounds():
+    todo = 1
+
+# If moving out of bounds, correct position
+# Define a basic patrol pattern
+def Patrol():
+    todo = 1
 
 
 ### IDENTIFY OBJECT FUNCTIONALITY
