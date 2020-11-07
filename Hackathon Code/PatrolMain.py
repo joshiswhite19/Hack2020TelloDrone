@@ -5,12 +5,19 @@ sys.path.insert(0, parent_dir)
 from djitellopy import Tello
 import cv2
 import time
-import AuxPatrolFunctions as apf
  
 #################### DEFINE GLOBAL VARIABLES #########################
-width = 320  # WIDTH OF THE IMAGE
-height = 240  # HEIGHT OF THE IMAGE
+X_BOUND = 4 * 30.48 # 4 feet in centimeters
+Y_BOUND = 6 * 30.48 # 6 feet in centimeters
+img_width = 320  # WIDTH OF THE IMAGE
+img_height = 240  # HEIGHT OF THE IMAGE
 simulation = 0   #  0 FOR FLIGHT 1 FOR TESTING
+state = {
+    "x": 0,
+    "y": 0,
+    "z": 0,
+    "theta": 0
+}
 ######################################################################
  
 ################## CONNECT TO TELLO & INIT ###########################
@@ -37,7 +44,7 @@ def main():
         # GET THE IMGAE FROM TELLO
         frame_read = drone.get_frame_read()
         myFrame = frame_read.frame
-        img = cv2.resize(myFrame, (width, height))
+        img = cv2.resize(myFrame, (img_width, img_height))
     
         # TO GO UP IN THE BEGINNING
         if simulation == 0:
@@ -62,7 +69,32 @@ def main():
             drone.land()
             break
 ######################################################################
-
 if __name__ == "__main__":
     main()
+######################################################################
+
+####################### AUXILIARY FUNCTIONS ##########################
+### DETERMINE PATROL PERIMETER FUNCTIONALITY
+
+def setState(state, x, y, z, theta):
+    state["x"] = x
+    state["y"] = y
+    state["z"] = z
+    state["theta"] = theta
+    
+def checkBounds(state):
+    lala = 1
+
+# Set initial state to zero
+# Update whenever a move happens
+
+### MAIN PATROL FUNCTIONALITY
+
+
+
+### IDENTIFY OBJECT FUNCTIONALITY
+
+
+
+### APPROPRIATE ACTION FUNCTIONALITY
 
