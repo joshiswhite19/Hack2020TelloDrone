@@ -23,7 +23,7 @@ state = {
 
 ######################################################################
  
-flight = 1     #  1 FOR FLIGHT 0 FOR NO FLIGHT TESTING
+flight = 0     #  1 FOR FLIGHT 0 FOR NO FLIGHT TESTING
 vision = 1     #  1 FOR ACTIVE VISION TESTING
 verbose = 1    #  1 FOR ADDED LOGGING, 0 OTHERWISE
 
@@ -50,7 +50,7 @@ if flight or vision:
 
 # Straight set of the state dictionary
 def setState(x, y, z, theta):
-    self.state["x"] = x
+    state["x"] = x
     state["y"] = y
     state["z"] = z
     state["theta"] = theta
