@@ -29,7 +29,7 @@ personality = 'STARTUP'
 
 ####################### OPERATING MODES ##############################
  
-flight = 0     #  1 FOR FLIGHT 0 FOR NO FLIGHT TESTING
+flight = 1     #  1 FOR FLIGHT 0 FOR NO FLIGHT TESTING
 vision = 1     #  1 FOR ACTIVE VISION TESTING
 verbose = 1    #  1 FOR ADDED LOGGING, 0 OTHERWISE
 
@@ -151,8 +151,48 @@ def checkBounds():
     x_dif = X_BOUND - state['x'] # if negative, outside bounds
     y_dif = Y_BOUND - state['y'] # if negative, outside bounds
     # If difference is negative, move it back in bounds
-    if (x_dif < 0) or (y_dif < 0):
-        print('OUTSIDE BOUNDS! HALP!')
+    if (x_dif < 0):
+        print(f'OUTSIDE RIGHT BOUND BY {x_dif} cm')
+        corrAngle = np.pi-state['theta']
+        if (corrAngle < 0):
+            print(f'input corrAngle: {-1*corrAngle*(180/np.pi)} degrees')
+            rotateCW(-1*corrAngle*(180/np.pi))
+        else: 
+            print(f'input corrAngle: {corrAngle*(180/np.pi)} degrees')
+            rotateCCW(corrAngle*(180/np.pi))
+
+        moveForward(-1*x_dif)
+
+    if (y_dif < 0):
+        print(f'OUTSIDE TOP BOUND BY {y_dif} cm')
+        corrAngle = (np.pi*(3/2))-state['theta']
+        if (corrAngle < 0):
+            rotateCW(-1*corrAngle*(180/np.pi))
+        else:
+            rotateCCW(corrAngle*(180/np.pi))
+
+        moveForward(-1*y_dif)
+        
+    if (x_dif > X_BOUND):
+        print(f'OUTSIDE LEFT BOUND BY {x_dif} cm')
+        corrAngle = np.pi-state['theta']
+        if (corrAngle < 0):
+            rotateCCW((np.pi + corrAngle)*(180/np.pi))
+        else:
+            rotateCW(state['theta']*(180/np.pi))
+        
+        moveForward(-1*state['x'])
+
+    if (y_dif > Y_BOUND):
+        print(f'OUTSIDE BOTTOM BOUND BY {y_dif} cm')
+        corrAngle = (np.pi*(1/2)) - state['theta']
+        if (corrAngle < 0):
+            rotateCW(-1*corrAngle*(180/np.pi))
+        else:
+            rotateCCW(corrAngle*(180/np.pi))
+
+        moveForward(-1*state['y'])
+
 
 
 # Define a basic patrol pattern
@@ -176,27 +216,37 @@ def Patrol():
 ######################################################################
 #################### IMPLEMENT MAIN FUNCTION #########################
 def main():
-    runtime = time.time()
+    t0 = time.time()
+    runtime = t0
+
+    #if personality == 'STARTUP':
+    if flight: drone.takeoff()
+        #personality = 'PATROL'
 
     while True:
 
-        dt = time.time() - runtime
-        if verbose: print(f'Current runtime: {dt} seconds')
+        t_old = runtime
+        runtime = time.time() - t0
+        dt = runtime - t_old
+        
+        if verbose: print(f'Current runtime: {runtime} seconds\n Current looptime: {dt}')
     # NEED TO REDO ALL OF THIS
         # GET THE IMAGE FROM TELLO
         #frame_read = drone.get_frame_read()
         #myFrame = frame_read.frame
         #img = cv2.resize(myFrame, (img_width, img_height))
 
-
-        if flight: drone.takeoff()
         time.sleep(2)
-        rotateCW(90)
-        time.sleep(2)
-        moveLeft(35)
-        time.sleep(2)
-        if flight: drone.land()
-        startCounter = 1
+        rotateCCW(45)
+        moveForward(100)
+        rotateCW(45)
+        moveForward(60)
+        checkBounds()
+        time.sleep(10)
+        #moveLeft(35)
+        #time.sleep(2)
+        #if flight: drone.land()
+        #startCounter = 1
     
         # # SEND VELOCITY VALUES TO TELLO
         # if me.send_rc_control:
@@ -214,6 +264,9 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print('\n KeyboardInterrupt recorded! Landing drone and quitting!')
         if flight: drone.land()
+        if flight or vision: del drone
+        #drone.STATE_UDP_PORT
+        
 ######################################################################
 
 
